@@ -1,0 +1,207 @@
+employee management------>>
+
+
+1-->>
+select ename from employee where salary=(select max(salary) from employee) order by ename asc; 
+
+
+2-->>
+select e.ename from employee e left join leave_details ld
+on e.id=ld.employee_id group by e.ename having sum(ld.number_of_days) is null order by e.ename asc; 
+
+
+3-->>
+select dname from department where budget=(select max(budget) from department) 
+order by dname asc;
+
+
+4-->>
+select e.ename from employee e join department d
+on e.id=d.managerid
+where d.dname='Accounts';
+
+
+5-->>
+select e.ename from employee e join works w join department d 
+on e.id=w.employee_id and w.department_id=d.id 
+where d.dname='Accounts' order by e.ename;
+
+
+6-->>
+select e.ename from employee e join works w on e.id=w.employee_id
+join department d on d.id=w.department_id
+where d.dname='HR' and e.salary>1000000
+group by e.ename
+having count(d.dname)>=1
+order by e.ename;
+
+
+7-->>
+select sum(d.number_of_days) as Leaves_Availed from leave_details d
+ join employee e on e.id=d.employee_id where e.ename='Vikram Singh';
+
+
+8-->>
+select e.ename,count(d.dname) as department_count from employee e join works w on e.id=w.employee_id
+join department d on d.id=w.department_id
+group by e.ename
+having count(d.dname)>=1
+order by e.ename;
+
+
+9-->>
+select d.dname,count(e.ename) as employee_count 
+from employee e join works w on e.id=w.employee_id
+join department d on d.id=w.department_id
+where  w.percent_time<=100
+group by d.dname
+order by d.dname;
+
+
+10-->>
+select e.ename from employee e join leave_details ld on e.id=ld.employee_id 
+where ld.leave_type='Sick Leave' group by e.ename order by e.ename;
+
+
+11-->>
+select e.ename from employee e join leave_details ld
+on e.id=ld.employee_id where ld.id is not null group by ename order by ename asc;
+
+
+12-->>
+select e.ename
+from employee e left join leave_details ld
+on e.id=ld.employee_id
+where ld.employee_id is null
+order by e.ename;
+
+
+13-->>
+select e.ename from employee e join works w
+on w.employee_id=e.id join department d
+on w.department_id=d.id where d.dname='HR' and w.percent_time=100 order by e.ename;
+
+
+14-->>
+select e.ename from employee e join department d
+on e.id=d.managerid group by e.ename order by e.ename asc;
+
+
+15-->>
+select employee.ename from employee where employee.id in 
+( select managerid from department  group by managerid having count(dname)>1)
+order by employee.ename;
+
+
+16-->>
+select e.ename,e.age from employee e left join works w on (e.id=w.employee_id) join department d 
+on (d.id=w.department_id) 
+left join leave_details l on (e.id=l.employee_id)
+where d.dname='HR' and l.number_of_days is null
+order by e.age desc ;
+
+
+17-->>
+select employee.ename, sum(number_of_days) as Leave_Count
+from employee 
+left join leave_details on employee.id=leave_details.employee_id
+group by employee.ename
+order by employee.ename;
+
+
+18-->>
+select e.ename
+from employee e left join works w
+on e.id =w.employee_id 
+left join department d 
+on d.id=w.department_id
+where d.dname is null
+order by e.ename;
+
+
+19-->>
+select ename from employee 
+where employee.id in ( select employee_id from works where department_id in 
+( select department.id from department where dname='HR'))
+and employee.id in ( select employee_id from works where department_id in 
+( select department.id from department where dname='Finance'));
+
+
+20-->>
+select e.ename from 
+employee e join works w on(e.id=w.employee_id) join department d 
+on(d.id=w.department_id) 
+
+where d.dname='Finance' and w.percent_time=100
+ 
+order by e.ename;
+
+
+21-->>
+select e.ename from employee e join department d
+on d.managerid=e.id where d.budget in (select max(budget) from department) order by e.ename;
+
+
+22-->>
+select e.ename from
+employee e left join leave_details l on(e.id=l.employee_id)
+group by e.ename
+having sum(number_of_days) in (select max(ad) from
+(select sum(number_of_days) as ad from
+employee e left join leave_details l on(e.id=l.employee_id)
+ group by e.ename) t)
+order by e.ename asc;
+
+
+23-->>
+select e.ename, e.salary from employee e join works w 
+on w.employee_id=e.id join department d
+on w.department_id=d.id where d.dname='HR' and e.salary in
+(select max(e.salary) from employee e join works w on w.employee_id=e.id join department d
+ on w.department_id=d.id where d.dname='HR') order by e.ename;
+
+
+24-->>
+
+
+
+
+
+25-->>
+select ename,age
+from employee where age=(select max(age) from employee) order by ename asc;
+
+
+26-->>
+select e.ename from employee e join works w
+on e.id=w.employee_id join department d 
+on d.id=w.department_id join leave_details l
+on l.employee_id=e.id where d.dname='Finance' and l.number_of_days in(select max(l.number_of_days) from leave_details l join employee e
+on l.employee_id=e.id join works w
+on w.employee_id=e.id join department d
+on w.department_id=d.id where d.dname='Finance')order by e.ename;
+ 
+
+27-->>
+select d.dname, count(e.id) as employee_count from employee e join works w join  department d on e.id=w.employee_id and w.department_id=d.id 
+group by dname having sum(w.percent_time) > 2000 order by dname;
+
+
+28-->>
+select e.ename from employee e join department d 
+on e.id=d.managerid group by e.ename having sum(d.budget)>5000000 order by d.dname; 
+
+
+29-->> 
+select e.ename from employee e join works w join leave_details l join department d on e.id=w.employee_id and w.department_id= d.id and e.id=l.employee_id
+where d.dname='HR' group by e.ename order by e.ename, sum(number_of_days) limit 1; 
+
+
+
+
+30-->>
+
+select distinct(e.ename) from employee e join department d on(e.id=d.managerid)
+where d.budget>2000000
+order by e.ename asc; 
+
